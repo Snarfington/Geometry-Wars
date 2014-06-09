@@ -21,6 +21,10 @@ static const CGFloat kPlayerMovementSpeed = 400.0f;
 @property (nonatomic) BOOL isExitingLevel;
 @property (nonatomic) NSArray *playerIdleAnimationFrames;
 @property (nonatomic) NSUInteger playerAnimationID; // 0 = idle; 1 = walk
+@property (nonatomic) CGPoint stickCenter;
+@property (nonatomic) float deltaX;
+@property (nonatomic) float deltaY;
+@property (nonatomic) float angleInDegrees;
 @end
 
 static inline CGPoint rwAdd(CGPoint a, CGPoint b) {
@@ -96,6 +100,8 @@ static inline CGPoint rwNormalize(CGPoint a) {
         
         [self.hud addChild:self.dPad];
         
+        self.stickCenter = CGPointMake(self.dPad.stickPosition.x, self.dPad.stickPosition.y);
+        
         // Add the world and hud nodes to the scene
         [self addChild:self.world];
         [self addChild:self.hud];
@@ -126,15 +132,28 @@ static inline CGPoint rwNormalize(CGPoint a) {
     // Update player sprite position and orientation based on DPad input
     
     //Movement
-    self.player.position = CGPointMake(self.player.position.x + playerVelocity.x * timeSinceLast * kPlayerMovementSpeed, self.player.position.y + playerVelocity.y * timeSinceLast * kPlayerMovementSpeed);
+    /*self.player.position = CGPointMake(self.player.position.x + playerVelocity.x * timeSinceLast * kPlayerMovementSpeed, self.player.position.y + playerVelocity.y * timeSinceLast * kPlayerMovementSpeed);
+    */
+    NSLog(@"Angle = %f", [self calculateAngle]);
+    self.player.zRotation = [self calculateAngle];
     
-    
-    if (playerVelocity.x != 0.0f)
-    {
-        self.player.xScale = (playerVelocity.x > 0.0f) ? -1.0f : 1.0f;
-    }
+    //if (playerVelocity.x != 0.0f)
+    //{
+    //   self.player.xScale = (playerVelocity.x > 0.0f) ? -1.0f : 1.0f;
+    //}
 }
 
+- (float) calculateAngle {
+    self.deltaX = self.dPad.stickPosition.x - self.stickCenter.x;
+    self.deltaY = self.dPad.stickPosition.y - self.stickCenter.y;
+    NSLog(@"DeltaX = %f, DeltaY = %f", self.deltaX, self.deltaY);
+    
+    self.angleInDegrees = atan2(self.deltaY, self.deltaX) * 180 / M_PI;
+    
+    float angle = self.angleInDegrees;
+    NSLog(@"Angle = %f", self.angleInDegrees);
+    return  angle;
+}
 
 - (void) didSimulatePhysics
 {

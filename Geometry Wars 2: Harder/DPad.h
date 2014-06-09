@@ -10,7 +10,7 @@
 
 @interface DPad : SKNode
 
-@property (nonatomic, readonly) CGPoint stickPosition;
+@property (nonatomic) CGPoint stickPosition;
 @property (nonatomic, readonly) CGFloat degrees;
 @property (nonatomic, readonly) CGPoint velocity;
 @property (nonatomic, assign) BOOL autoCenter;
