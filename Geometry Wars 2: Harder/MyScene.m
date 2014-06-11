@@ -132,10 +132,11 @@ static inline CGPoint rwNormalize(CGPoint a) {
     // Update player sprite position and orientation based on DPad input
     
     //Movement
-    /*self.player.position = CGPointMake(self.player.position.x + playerVelocity.x * timeSinceLast * kPlayerMovementSpeed, self.player.position.y + playerVelocity.y * timeSinceLast * kPlayerMovementSpeed);
-    */
-    NSLog(@"Angle = %f", [self calculateAngle]);
-    self.player.zRotation = [self calculateAngle];
+    //self.player.position = CGPointMake(self.player.position.x + playerVelocity.x * timeSinceLast * kPlayerMovementSpeed, self.player.position.y + playerVelocity.y * timeSinceLast * kPlayerMovementSpeed);
+    if ((self.dPad.position.x != self.stickCenter.x) && (self.dPad.position.y != self.stickCenter.y)) {
+        NSLog(@"Angle = %f", [self calculateAngle]);
+        self.player.zRotation = [self calculateAngle];
+    }
     
     //if (playerVelocity.x != 0.0f)
     //{
@@ -144,23 +145,26 @@ static inline CGPoint rwNormalize(CGPoint a) {
 }
 
 - (float) calculateAngle {
+    self.deltaX = 0.0;
+    self.deltaY = 0.0;
+    self.angleInDegrees = 0.0;
     self.deltaX = self.dPad.stickPosition.x - self.stickCenter.x;
     self.deltaY = self.dPad.stickPosition.y - self.stickCenter.y;
     NSLog(@"DeltaX = %f, DeltaY = %f", self.deltaX, self.deltaY);
     
-    self.angleInDegrees = atan2(self.deltaY, self.deltaX) * 180 / M_PI;
+    self.angleInDegrees = atan2(self.deltaY, self.deltaX) + 180;// / M_PI;
     
     float angle = self.angleInDegrees;
     NSLog(@"Angle = %f", self.angleInDegrees);
     return  angle;
 }
 
-- (void) didSimulatePhysics
+/*- (void) didSimulatePhysics
 {
     self.player.zRotation = 0.0f;
-}
+}*/
 
--(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+/*-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     // 1 - Choose one of the touches to work with
     UITouch * touch = [touches anyObject];
     CGPoint location = [touch locationInNode:self];
@@ -187,15 +191,15 @@ static inline CGPoint rwNormalize(CGPoint a) {
     
     // 8 - Add the shoot amount to the current position
     CGPoint realDest = rwAdd(shootAmount, projectile.position);
-    
+
     // 9 - Create the actions
     float velocity = 480.0/1.0;
     float realMoveDuration = self.size.width / velocity;
     SKAction * actionMove = [SKAction moveTo:realDest duration:realMoveDuration];
     SKAction * actionMoveDone = [SKAction removeFromParent];
     [projectile runAction:[SKAction sequence:@[actionMove, actionMoveDone]]];
+
     
-    
-}
+}*/
 
 @end
